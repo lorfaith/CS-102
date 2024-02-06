@@ -32,8 +32,6 @@ movieReviews %>%
   html_nodes('.rating-other-user-rating') %>%
   html_text() -> stars
 
-#metascore
-
 
 cat("Title: ", length(title), "\n")
 cat("Username: ", length(username), "\n")
