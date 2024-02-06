@@ -1,0 +1,87 @@
+---
+title: "movieReviews.rmd"
+output: pdf_document
+date: "2024-02-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r 1}
+library(rvest)
+library(httr)
+library(dplyr)
+library(polite)
+
+scrapeReviews <- function(url) {
+  movieReviews <- read_html(url)
+  
+#title
+movieReviews %>%
+  html_nodes('.title') %>%
+  html_text() -> title
+
+#username
+movieReviews %>%
+  html_nodes('.display-name-link') %>%
+  html_text() -> username
+
+#content
+movieReviews %>%
+  html_nodes('.content') %>%
+  html_text() -> content
+
+#date
+movieReviews %>%
+  html_nodes('.review-date') %>%
+  html_text() -> date
+
+#stars
+movieReviews %>%
+  html_nodes('.rating-other-user-rating') %>%
+  html_text() -> stars
+
+#metascore
+
+
+cat("Title: ", length(title), "\n")
+cat("Username: ", length(username), "\n")
+cat("Content: ", length(content), "\n")
+cat("Date: ", length(date), "\n")
+cat("Stars: ", length(stars), "\n")
+#cat("Metascore: ", length(metascore),"\n")
+
+minLength<- min(length(title), length(username), length(content), length(date), length(stars))
+
+
+movieReviews1 <- data.frame (
+  Title = title[1:minLength],
+  Username = username[1:minLength],
+  Content = content[1:minLength],
+  Date = date[1:minLength],
+  Stars = stars[1:minLength],
+  stringsAsFactors = FALSE
+)
+
+View(movieReviews1)
+return(movieReviews1)
+}
+
+url1 <- 'https://www.imdb.com/title/tt0120338/reviews?ref_=tt_urv'
+target_reviews <- 300
+movieReview <- data.frame()
+  
+  page <- 1
+  while (nrow(movieReview) < target_reviews) {
+    url <- paste0(url1, page)
+    reviewsPage <- scrapeReviews(url)
+    movieReview <- bind_rows(movieReview, reviewsPage)
+    page <- page + 1
+  }
+  movieReview <- movieReview[1:target_reviews, ]
+  
+  cat("Number of scraped reviews: ", nrow( movieReview), "\n")
+  View( movieReview)
+  
+```
