@@ -8,707 +8,637 @@ date: "2024-02-06"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r 1stMovie}
+```{r movie reviews}
 library(rvest)
 library(httr)
 library(dplyr)
 library(polite)
+library(writexl)
 
-scrapeReviews <- function(url) {
-  movieReviews <- read_html(url)
-  
-#title
-movieReviews %>%
-  html_nodes('.title') %>%
-  html_text() -> title
+#1ST MOVIE(Titanic)
+session <- bow(url = 'https://www.imdb.com/title/tt0120338/reviews?ref_=tt_urv', 
+               user_agent = "Educational") 
+session
+  scrapeReviews <- function(page_url) { 
+  movieReviews <- read_html(page_url) 
 
-#username
-movieReviews %>%
-  html_nodes('.display-name-link') %>%
-  html_text() -> username
+    #title
+    movieReviews %>%
+      html_nodes('.title') %>%
+      html_text() -> title
+  
+    #username
+    movieReviews %>%
+      html_nodes('.display-name-link') %>%
+      html_text() -> username
+    
+    #content
+    movieReviews %>%
+      html_nodes('.content') %>%
+      html_text() -> content
+    
+    #date
+    movieReviews %>%
+      html_nodes('.review-date') %>%
+      html_text() -> date
 
-#content
-movieReviews %>%
-  html_nodes('.content') %>%
-  html_text() -> content
+    #stars
+      movieReviews %>%
+        html_nodes('.rating-other-user-rating') %>%
+        html_text() -> stars
 
-#date
-movieReviews %>%
-  html_nodes('.review-date') %>%
-  html_text() -> date
+    #dataframe
+      titanic_df = data.frame(Title = title[1:25],
+                                    Username = username[1:25], 
+                                    Content = content[1:25],
+                                    Date = date[1:25],
+                                    Stars = stars[1:25]
+    )} 
+    
+    #URLs
+      titanic_urls<- c('https://www.imdb.com/title/tt0120338/reviews?ref_=tt_urv',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnruqls4qab22mndd4pkalep6vd5pjt6uds2oyyvxpzlb4dzzauudfic4djuva3jdcmjcoiqm',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnzvr7rmqary3ekdx6xpb3b7evd5pjt6uds4om2vvnjob4d6sizcxotukxlowedjtfgimac32',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbyrhrmyabs2modz67jahbpytttfjrkidc5o43fjmzyoanberaloqcmazjpjgxb6nbahioa',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnburdtm4ab43yptr67latcpqvt5pjt6ucc4pe2f7nznb4d557oz66pk24a65p2sajociq4yg',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbtrhsmocj73yodb67ib3b72tttfjrkybctpa4v7mjyoc55pnraajqg3rbg5ixyl7exz5fq',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbrqps4wart3iotd6hpahe7yud5pjt6ubkto4yvznjnb4dyt3itbfqbgwcpay5mw3kb22nhe',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjyr3tmqcj72mmtz67jb7a7uvteoq366ssypayv3mzpcv4k4zo5bs5nat45f3me2bj364qj5gq',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjzrxqmyazs3qmdv4hkatd7ww35pjt6udk7om3vlnzpb4dz7tm74m3ssb4pt57jacrilvyb6',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjwrdumycby3iotx7hfaxdpsu3coq366sszoy4v7prld54k5gxgdlaam7367jpc67s4dfetk7i',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjxr3smsazz3qkdx77pape7qudeoq366ss3oqzfxmjkdv4k54wtu6em74mp3n3l64ug6d6uu3i',
+                       'https://www.imdb.com/title/tt0120338/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjur7s4ycj62mnd76pnalepww3hoq366ss6oq2vlnridb4k5ppgo3zzl236k7pbn3uz6vdsquy'
+                      )
+      allReviews <- lapply(titanic_urls, scrapeReviews) 
+      
+      movieReviews1 <- do.call(rbind, allReviews) 
+      
+      View(movieReviews1)
 
-#stars
-movieReviews %>%
-  html_nodes('.rating-other-user-rating') %>%
-  html_text() -> stars
 
-#metascore
+#2ND MOVIE(Wonka)
+session2 <- bow(url = 'https://www.imdb.com/title/tt6166392/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+session2
+    scrapeReviews2 <- function(page_url) { 
+    movie2Reviews <- read_html(page_url) 
+        
+        #title
+        movie2Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie2Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie2Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie2Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie2Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        wonka_df = data.frame(Title = title[1:25],
+                                Username = username[1:25], 
+                                Content = content[1:25],
+                                Date = date[1:25],
+                                Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      wonka_urls<- c('https://www.imdb.com/title/tt6166392/reviews?ref_=tt_urv',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnrtrdsm6bz23mktd7poala7uwt5pjt6ubc7pezf5njcb4dva74zj4v3y5gd7346jyeurfmrq',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbyrlum2cj43uktb4hoa3cp6vd5pjt6ubc6oqyftnrob4d52op4qm3tczx4e7uyc7xgxfdxg',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbtrdumsab534nd56xoapcpevd5pjt6ubc6oiyfxnrob4d3ecyoupohenab2n7tsovbqwuqa',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjzrlqmqcb234kdd6hea7dpqu3goq366sssouzfvmzpcr4k5e4lfkm36af3a6keucmm47exubq',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjtr7ummcb73mpdd6pjaxapuudhoq366sssou4vjnbldb4k42gzvmbkhcgilc24mabyi7n5fmy',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrzr7s4waz43amdv4pfb7e7qudeoq366sssoq4vxnzmcr4k4dvh5vaqgoh4ytyuct4wduem6ti',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrurdsm4bz43yptd6pfaxd72vdgoq366sssouzvxmjmd54k5iybehwpgttyjufghndxpg42sla',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrtr7r44bjs2intx67oa7d7qw3hoq366sssouyfznjndz4k5pm3bu3skjz2cjxq7zdz6hbhqvi',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzzqlrmmbzs2iodd6hlb7b7eu35pjt6ubc6oazfxmrnb4d7euetjavgmsfzhngscotqw5kqq',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzxqpum2cj73eodr6hladapgw35pjt6ubc7pe3fxmrdb4d2xci6idppd55lrhwpf24wlypo4',
+                       'https://www.imdb.com/title/tt6166392/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzurps4ybz33apdv6pjb3dpevt5pjt6ubc6omzfxprob4dseqc6zynrjve6slxhobcsvk6ci'
+                       
+      )
+      allReviews2 <- lapply(wonka_urls, scrapeReviews2) 
+      
+      movieReviews2 <- do.call(rbind, allReviews2) 
+      
+      View(movieReviews2)
+      
+  
+#3RD MOVIE(The Shawshank Redemption)
+      session <- bow(url = 'https://www.imdb.com/title/tt0111161/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews3 <- function(page_url) { 
+        movie3Reviews <- read_html(page_url) 
+        
+        #title
+        movie3Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie3Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie3Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie3Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie3Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        redemption_df = data.frame(Title = title[1:25],
+                                   Username = username[1:25], 
+                                   Content = content[1:25],
+                                   Date = date[1:25],
+                                   Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      redemption_urls<- c('https://www.imdb.com/title/tt0111161/reviews?ref_=tt_urv',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnrwqptm2bzs2imd57xjadap2vl5pjt6ud2yo42fjmzcb4dt3bbn6myegnfzlug5kkqljl5lq',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnztrxum6bjt3qodt6pea7d7gwt5pjt6ud24oiyfznzmb4dwqlvdr4agyy6ueifks6bowuxr4',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbzrhqm4ar73epdt4hoatb7uwt5pjt6ud2zou4vjnrcb4dyokgxyk4s7rqzvjj3ypsapfafy',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbxrpum2arz3mpt76hpade7ev35pjt6ud2tpazvvmjdb4dqkpsrlp3hwrzaqst5vjqtmtgei',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbvqlrm4bjy34otb77ob3cpsw35pjt6udkyoq4ftmrlb4dumwo7lmq3ptkh4gfiq5tetqpvk',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbtqlsmybb73yktx77oa3c7gul5pjt6udkyoq4vvmrpb4dzrdvwyrafdg2g7lvdy6gyzm7jm',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjyqpqmqcbz3mmtb7xea3b7wul5pjt6uck5pe4vrmrpb4dvuz5y47lcuwlo3wj5ca7yryye6',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjwr7s42bb534pdb4hnaxa7ew35pjt6uckyoa2v5prlb4durh4ufbpfqq755tzkat2p6va7c',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjxrhsm4azs3amdz7xoaddp2vd5pjt6ud2toy4f3mbkb4d64jlaizigo436f7xilhawvidzs',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjurtqmubzt3eot76plahe74vd5pjt6ud26o4zf7njlb4dsr4deafumok35mswpqaw6twnho',
+                          'https://www.imdb.com/title/tt0111161/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjurdt4saby3aodv7hjala7uu35pjt6udczpa4vvmrkb4dxqsmsfxozwt4ysxr4gxgbvsr6o'
+      )
+      
+      allReviews3 <- lapply(redemption_urls, scrapeReviews3) 
+      
+      movieReviews3 <- do.call(rbind, allReviews3) 
+      
+      View(movieReviews3)
 
 
-cat("Title: ", length(title), "\n")
-cat("Username: ", length(username), "\n")
-cat("Content: ", length(content), "\n")
-cat("Date: ", length(date), "\n")
-cat("Stars: ", length(stars), "\n")
-#cat("Metascore: ", length(metascore),"\n")
+#4TH MOVIE(Argylle)
+      session <- bow(url = 'https://www.imdb.com/title/tt15009428/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews4 <- function(page_url) { 
+        movie4Reviews <- read_html(page_url) 
+        
+        #title
+        movie4Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie4Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie4Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie4Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie4Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        argylle_df = data.frame(Title = title[1:25],
+                                   Username = username[1:25], 
+                                   Content = content[1:25],
+                                   Date = date[1:25],
+                                   Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      argylle_urls<- c('https://www.imdb.com/title/tt15009428/reviews?ref_=tt_urv',
+                          'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnrqr3t4ubbs3qpt74hjahcpyul5pjt6ubc6pe3fvmzdb4d4zrn7kmdzekw7ixyrwxpmsqyc4',
+                          'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnztrxu4ocj63motv7xeadepewt5pjt6ubc6pe4f7prcb4drpfbkoctj4yb2jqmsfz75ypzlu',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbvqprmmaj73undx7xpapepgtttfjrkic23o44fxnjyoaq4qtbrqpyr5q5o4spnmpxixoyq',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjyr3smwbjs3uodx4piata72tttfjrkic23oazfxmjyoa7barlbrtaol45nfk74cvxgfwhq',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjsrttm2cbt3updb7pnaxe7qud5pjt6ubc5oa3v7mrdb4d67ece3rhca2osc7rglbmih6xvc',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrzqls4oab53mpdd67ia3epqwthoq366sssoyyv3mrlcr4k5rg7e62wcfifm7sen52ss5aspti',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrxrpt4sbjs3mmdz6hnb3a7uv3coq366sssoyyv3mjkdz4k4e7cvjm2sg2uxyaqn7wj5gsyuti',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrsrdumyabz2mpdd7hjalepgtttfjrkic23oy2vrmryoba44qev6a62jshbuvbcybf6ndoq',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrrrprmubbt3ymt56xmadb7gvl5pjt6ubc5oa2fjnjlb4dwq3lizqdrhzf7nyy4layfpf2g6',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzwrxsm4az62int36hoalep2vt5pjt6ubc5oizf7mzlb4d3cmxox3kdeghr35pnzn4viehf4',
+                           'https://www.imdb.com/title/tt15009428/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzsrtsmmajy3mpd36hoatapuvdhoq366sssoyyv7nzidv4k5h2khdwnowq3yxf3yfbyup2jfvi'
+          )
+      
+      allReviews4 <- lapply(argylle_urls, scrapeReviews4) 
+      
+      movieReviews4 <- do.call(rbind, allReviews4) 
+      
+      View(movieReviews4)
 
-minLength<- min(length(title), length(username), length(content), length(date), length(stars))
+
+#5TH MOVIE(The Marvels)
+      session <- bow(url = 'https://www.imdb.com/title/tt10676048/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews5 <- function(page_url) { 
+        movie5Reviews <- read_html(page_url) 
+        
+        #title
+        movie5Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie5Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie5Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie5Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie5Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        marvels_df = data.frame(Title = title[1:25],
+                                Username = username[1:25], 
+                                Content = content[1:25],
+                                Date = date[1:25],
+                                Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      marvels_urls<- c('https://www.imdb.com/title/tt10676048/reviews?ref_=tt_urv',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnrxrdq4sazt3ukt56hladb74wt5pjt6ubc7omyf5nbjb4dq5mucb6vdc3ca5kq7yawqghlvi',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnzsrtrmsab734mdz6xpb7b7yul5pjt6ubc5oeyflprjb4dwypmgdsz5uner63otsgt4tmhcy',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbyrtumyars3ymtz67ia7d7qw35pjt6ubc7oizf3mbpb4d63sobuoxdnlklz6xldtxqwokak',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbxrpsm4br43eot76hkaldpyul5pjt6ubc7oqyfjmbjb4d6z76dxszh7s47y6antar3i5hby',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbvrds4wbbt3and567jald7qtttfjrkickyom2flmzyoaqbzgxc5rirztejfvwvngkibfpq',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbqrls4ybbs2modb4piadd7gwt5pjt6ubc6o43vlmjnb4d3k4puaoc2ajoicsdmi4hsjzfbi',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjyr3qm4cjz3akdz6pka7a72v35pjt6ubc7pa4fxpzob4d4zsvy67qqalzaokbfowyimg5ok',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjzrdumocb53ikdd7hiatdpsv3eoq366sssoqzvtnjidr4k43sbf43pqgh3l5uzckr32yybcli',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjxrxqmqbz43qpd54hpatbp6vl5pjt6ubc7ouyvlnbob4dzg7o4mqwlvr4tx76ao7pjq35mk',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjurpu4sbzz3yntr4plb7b76wt5pjt6ubc7oqzvlmrib4dxlhum42377sxok74mnjgjakq7a',
+                             'https://www.imdb.com/title/tt10676048/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjsrxu4qbb534kdv77eatapwul5pjt6ubc5oizv7nzib4d5ppva2lvufxgnyuiyd6gqpavr2'
+                       
+      )
+      
+      allReviews5 <- lapply(marvels_urls, scrapeReviews5) 
+      
+      movieReviews5 <- do.call(rbind, allReviews5) 
+      
+      View(movieReviews5)
 
 
-movieReviews1 <- data.frame (
-  Title = title[1:minLength],
-  Username = username[1:minLength],
-  Content = content[1:minLength],
-  Date = date[1:minLength],
-  Stars = stars[1:minLength],
-  stringsAsFactors = FALSE
-)
+#6TH MOVIE(Aquaman)
+      session <- bow(url = 'https://www.imdb.com/title/tt9663764/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews6 <- function(page_url) { 
+        movie6Reviews <- read_html(page_url) 
+        
+        #title
+        movie6Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie6Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie6Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie6Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie6Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        aquaman_df = data.frame(Title = title[1:25],
+                                Username = username[1:25], 
+                                Content = content[1:25],
+                                Date = date[1:25],
+                                Stars = stars[1:25]
+        )} 
+      
+      #URLs
+     aquaman_urls<- c('https://www.imdb.com/title/tt9663764/reviews?ref_=tt_urv',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnzsrptmyaby2motd6xiala7ew35pjt6ubc5oa3v5prmb4dywodypmcp3f462blm2rbb7jbgi',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbvrtqmmar43uktx7xpa7c72u35pjt6ubc5oazvzpzdb4du55jhs2us4dlxrndtwa5n4ekfy',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjwrhr4sab73qmt36xlalapuvl5pjt6ubc6oe3fzpzlb4d4rgituozlfzcep44eowilk337m',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjqrhum4bz73uotr4pladepevlfoq366sssou4vxnbddf4k4qzd3gbrvk3uar2pqhbih3nvmwa',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrxr3tmmbz23mmdv6hjadb7swt5pjt6ubc6oa3fzmzmb4dwh6pkaw6jtjy62ecver2ex3iis',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrvrps4sazz2iptz6hiaxbpww3hoq366sssou4vvnzidr4k5j5ucnywq534jqfzjdj33433svi',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrrrpt4ucjt3eod36plape7qudfoq366sssouyvvnrndj4k4p3kbjzzjn6gqurdeoaxvkdcg4i',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzxr7t46az73antx6pjadb72wt5pjt6ubc6ouyvjnzcb4dwoqebybp5l5loh2iswy4lfhvne',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzsqlr44cj634ntx4peadep6vl5pjt6ubc6omyfzmjpb4dukocjimirp7pngpfp2okr7lic6',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzrrht4wazt3uptx7hob3bp4udcoq366sssou4vvnrld54k5pycsey5fx3yhlfmrxlxg5bugii',
+                        'https://www.imdb.com/title/tt9663764/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmburxrmuab52mkd767ia7d76vtioq366sssouyvxpridf4k4g3bn6j2hkm7dknnkttvz6h2tqq'
+      )
+      
+      allReviews6 <- lapply(aquaman_urls, scrapeReviews6) 
+      
+      movieReviews6 <- do.call(rbind, allReviews6) 
+      
+      View(movieReviews6)
 
-View(movieReviews1)
-return(movieReviews1)
-}
 
-url1 <- 'https://www.imdb.com/title/tt0120338/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview <- data.frame()
-  
-  page <- 1
-  while (nrow(movieReview) < target_reviews) {
-    url <- paste0(url1, page)
-    reviewsPage <- scrapeReviews(url)
-    movieReview <- bind_rows(movieReview, reviewsPage)
-    page <- page + 1
-  }
-  movieReview <- movieReview[1:target_reviews, ]
-  
-  cat("Number of scraped reviews: ", nrow( movieReview), "\n")
-  View( movieReview)
-  
-```
+#7TH MOVIE(Barbie)
+      session <- bow(url = 'https://www.imdb.com/title/tt1517268/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews7 <- function(page_url) { 
+        movie7Reviews <- read_html(page_url) 
+        
+        #title
+        movie7Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie7Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie7Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie7Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie7Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        barbie_df = data.frame(Title = title[1:25],
+                                Username = username[1:25], 
+                                Content = content[1:25],
+                                Date = date[1:25],
+                                Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      barbie_urls<- c('https://www.imdb.com/title/tt1517268/reviews?ref_=tt_urv',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4xojermtizcsyqf7gxh7nbzrhr4uajs3yptz6pqcwb32w3dnaqkscssmjon35ednpavwhupnkk47chnqepu2',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4u6dermtizcsyih7cuhfmjsrlqmmcj23qpt567qcwb32w3cniq2wbcsmjodhbom7nr64epcnxsfjlavchazy',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4v6jermtizcsyia72vhxnzurlr4obr63modz7pqcwb32w3dnms2udkzmjoda5zbpzaordazuvia3qdiwdwza',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4w6ddbsqyxdo6ih7ovx5obtqpt4ybj22imtx7xldpj3qflinis2icc6omrtbv76luaaslgf2rpsh3jt5vnnvti',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4w6hcjsqyxdo6ih72uhrmztrhq4wcj33qktd7hldpj3qflinisk2c27ourtaa7a76c4fqobpmpjeacjd5twuby',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4w6jdbsqyxdo6ig62vhxojxrxu4wbjt34pd367ldpj3qfliniskudc6oqrtbs37cug6c3dnmjcne7bdq4nz2wi',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4w6ncbsqyxdo6if7wxhrmzyrlr4sar734nt767qcwb32w3dneq2ids7mjojwmawbjxui2pirhqxbl6aegl5k',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4w6rbjsqyxdo6ig7gtxxnjzqpr4sab63ekt36xfdpj3qflinit2yc27partatft334noplnyfeazveraixwyya',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4xohcbsqyxdo6ig7kvxhmbxqpq4mbz52mptz67mapo6qebgmeqkkdsyoy2u7w7ttutqppfvvo7uohiecdw4tkua',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4xolbjsqyxdo6if76wxvnrqr7smmcj23untz4ppdpj3qfliniw2wcs6oyrtarsrhud6w7drolwxisinwvllvka',
+                        'https://www.imdb.com/title/tt1517268/reviews/_ajax?&paginationKey=g4xorbjsqyxdo6ig7wvh7njqr7rmobz53amdx4heapo6qebgmet2sdk6oezu7w6zqolw5n7qnctzioj3x4q3sjwk'
+      )
+      
+      allReviews7 <- lapply(barbie_urls, scrapeReviews7) 
+      
+      movieReviews7 <- do.call(rbind, allReviews7) 
+      
+      View(movieReviews7)
 
-```{r 2ndMovie}
-scrapeReviews2 <- function(url) {
-  movie2Reviews <- read_html(url)
-  
-  #title
-  movie2Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie2Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie2Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie2Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie2Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews2 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews2)
-}
+#8TH MOVIE(Five Feet Apart)
+      session <- bow(url = 'https://www.imdb.com/title/tt1517268/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews8 <- function(page_url) { 
+        movie8Reviews <- read_html(page_url) 
+        
+        #title
+        movie8Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie8Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie8Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie8Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie8Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        fivefeet_df = data.frame(Title = title[1:25],
+                               Username = username[1:25], 
+                               Content = content[1:25],
+                               Date = date[1:25],
+                               Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      fivefeet_urls<- c('https://www.imdb.com/title/tt6472976/reviews?ref_=tt_urv',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbrrdqmuajy3imd76pla3cpywt5pjt6uck4oi3fzprpb4d54l324q233opl4bvhktnrtg4zy',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjsrdtm4bb23qod377kb7apgvl5pjt6uck4oy4vrnrkb4d5rtvsqtsznrqkuisiql3w54lfc',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmryrlqmobb33mkt57pnalbpeuteoq366ss7o42vjmrldv4k5geghrhepdt2yogvuvvvlass5qi',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrxrhu4oab734kt567paha72u3foq366ss7pe3f3mbodz4k5e2zxn2syigkmrqhlframm3yv6q',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrsqltmubr52indt7heatcpsu3eoq366sssoa2ftmzmcr4k4k2jpxkioicvjntteuzzr3wjeky',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrrrxr4oaz53qkd57hma7b74vl5pjt6uck4oyyvvnjjb4d6jie6a5mohudpogl43w4v4aw3o',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzzrxrm2br43eotx4pmb7a72v35pjt6ucctomyvrpzkb4d437lb5js4d6fv5o6incpwgb3xu',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzsrlt4obj63emtz6platc7uvl5pjt6uck4pa3v7mznb4du767u45ute3ntrgqd44zqls7ks',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzurlt4obj63emtz6platc7uvl5pjt6uccsoyzv5pznb4d6hgq5c6gbolmzzdizcpbeggpma',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzqrdu4waz33mntt6hja7epsu3goq366ss6oazf7mzidn4k4wfs4jg6iph4xlynmhsykg55jbi',
+                      'https://www.imdb.com/title/tt6472976/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmbyrxumwbr234pdd7pla3c7qwtfoq366ss7pa4vtnzldb4k5xmsk4bt76rfy5suxmpu4nd34ja'
+                      
+      )
+      
+      allReviews8  <- lapply(fivefeet_urls, scrapeReviews8) 
+      
+      movieReviews8 <- do.call(rbind, allReviews8) 
+      
+      View(movieReviews8)
 
-url1 <- 'https://www.imdb.com/title/tt6166392/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview2 <- data.frame()
+#9TH MOVIE(Ready or Not)
+      session <- bow(url = 'https://www.imdb.com/title/tt7798634/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews9 <- function(page_url) { 
+        movie9Reviews <- read_html(page_url) 
+        
+        #title
+        movie9Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie9Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie9Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie9Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie9Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        readyOrNot_df = data.frame(Title = title[1:25],
+                                 Username = username[1:25], 
+                                 Content = content[1:25],
+                                 Date = date[1:25],
+                                 Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      readyOrNot_urls<- c('https://www.imdb.com/title/tt7798634/reviews?ref_=tt_urv',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbwrlsmmbb63unt577fapapgu35pjt6ubktou4ftprmb4dyz2qltx5stiyajpgmgjxjdumso',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbqr3s44bbz3qot36hfatdpevl5pjt6ucc3pa3v7nbdb4dxlxgufc4trr4gs5dlm7zrbp674',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjzrlrmmbjs3qnt74hkaxa7eud5pjt6ucctoe3f7mjcb4dvm3khk2pnvpj4j6byvpat2nxqs',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjurts4qcj63mndt6xnapepeu35pjt6ucc2ou4v5mjpb4dtk3nfvucrgrkhltn6wgzxqqwaa',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjvrdqmwbj73ykdx6hjahe7evl5pjt6ucczom3fzmjjb4dt2dqlbko5tiahfc62leafzxoek',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjtrtrm2cj334pdt6hpade7ywtfoq366ss6oa4vxprpd54k4l6h7b7bnxib5v5h5awfhsflk7q',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjqrdqm6azy2mndt7peadbpguleoq366ss6o4yf5mzpdj4k5zxvnoo7sf6lqygaafordldvs3y',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjrrlq4yar33mptz7xladd74vlhoq366ss6oa3frmrmdj4k4qaasigwhw2ni43xmndmijy2nka',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmryrls4mcbt34ptr7pnaxd7gtttfjrkqds5pezfvnryoahgjvqazkpqwk37nq3nps5q3ypa',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrwqpt46azz34ntx4hkahd74tttfjrkqds5oi4frpzyodanzbmw4yrqn4q55ppipigfprxq',
+                        'https://www.imdb.com/title/tt7798634/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrxr3r4saby3akdr4pjadcp4wteoq366ss6ou4fznzndb4k4bstn2roxhppuvf2m5slr3j7cki'
+                        
+      )
+      
+      allReviews9  <- lapply( readyOrNot_urls, scrapeReviews9) 
+      
+      movieReviews9 <- do.call(rbind, allReviews9) 
+      
+      View(movieReviews9)
 
-page <- 1
-while (nrow(movieReview2) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews2(url)
-  movieReview2 <- bind_rows(movieReview2, reviewsPage)
-  page <- page + 1
-}
-movieReview2 <- movieReview2[1:target_reviews, ]
 
-cat("Number of scraped reviews: ", nrow( movieReview2), "\n")
-View( movieReview2)
-```
-
-```{r 3rd Movie}
-scrapeReviews3 <- function(url) {
-  movie3Reviews <- read_html(url)
-  
-  #title
-  movie3Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie3Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie3Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie3Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie3Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews3 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews3)
-}
-
-url1 <- 'https://www.imdb.com/title/tt0111161/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview3 <- data.frame()
-
-page <- 1
-while (nrow(movieReview3) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews3(url)
-  movieReview3 <- bind_rows(movieReview3, reviewsPage)
-  page <- page + 1
-}
-movieReview3 <- movieReview3[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview3), "\n")
-View( movieReview3)
-```
-
-```{r 4thMovie}
-scrapeReviews4 <- function(url) {
-  movie4Reviews <- read_html(url)
-  
-  #title
-  movie4Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie4Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie4Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie4Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie4Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews4 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews4)
-}
-
-url1 <- 'https://www.imdb.com/title/tt15009428/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview4 <- data.frame()
-
-page <- 1
-while (nrow(movieReview4) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews4(url)
-  movieReview4 <- bind_rows(movieReview4, reviewsPage)
-  page <- page + 1
-}
-movieReview4 <- movieReview4[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview4), "\n")
-View( movieReview4)
-```
-
-```{r 5thMovie}
-scrapeReviews5 <- function(url) {
-  movie5Reviews <- read_html(url)
-  
-  #title
-  movie5Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie5Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie5Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie5Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie5Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews5 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews5)
-}
-
-url1 <- 'https://www.imdb.com/title/tt10676048/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview5 <- data.frame()
-
-page <- 1
-while (nrow(movieReview5) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews5(url)
-  movieReview5 <- bind_rows(movieReview5, reviewsPage)
-  page <- page + 1
-}
-movieReview5 <- movieReview5[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview5), "\n")
-View( movieReview5)
-```
-
-```{r 6thMovie}
-scrapeReviews6 <- function(url) {
-  movie6Reviews <- read_html(url)
-  
-  #title
-  movie6Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie6Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie6Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie6Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie6Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews6 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews6)
-}
-
-url1 <- 'https://www.imdb.com/title/tt9663764/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview6 <- data.frame()
-
-page <- 1
-while (nrow(movieReview6) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews6(url)
-  movieReview6 <- bind_rows(movieReview6, reviewsPage)
-  page <- page + 1
-}
-movieReview6 <- movieReview6[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview6), "\n")
-View( movieReview6)
-```
-
-```{r 7thMovie}
-scrapeReviews7 <- function(url) {
-  movie7Reviews <- read_html(url)
-  
-  #title
-  movie7Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie7Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie7Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie7Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie7Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews7 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews7)
-}
-
-url1 <- 'https://www.imdb.com/title/tt1517268/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview7 <- data.frame()
-
-page <- 1
-while (nrow(movieReview7) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews7(url)
-  movieReview7 <- bind_rows(movieReview7, reviewsPage)
-  page <- page + 1
-}
-movieReview7 <- movieReview7[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview7), "\n")
-View( movieReview7)
-```
-
-```{r 8thMovie}
-scrapeReviews8 <- function(url) {
-  movie8Reviews <- read_html(url)
-  
-  #title
-  movie8Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie8Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie8Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie8Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie8Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews8 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews8)
-}
-
-url1 <- 'https://www.imdb.com/title/tt6472976/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview8 <- data.frame()
-
-page <- 1
-while (nrow(movieReview8) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews8(url)
-  movieReview8 <- bind_rows(movieReview8, reviewsPage)
-  page <- page + 1
-}
-movieReview8 <- movieReview8[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview8), "\n")
-View( movieReview8)
-```
-
-```{r 9th Movie}
-scrapeReviews9 <- function(url) {
-  movie9Reviews <- read_html(url)
-  
-  #title
-  movie9Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie9Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie9Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie9Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie9Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews9 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews9)
-}
-
-url1 <- 'https://www.imdb.com/title/tt7798634/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview9 <- data.frame()
-
-page <- 1
-while (nrow(movieReview9) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews9(url)
-  movieReview9 <- bind_rows(movieReview9, reviewsPage)
-  page <- page + 1
-}
-movieReview9 <- movieReview9[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow( movieReview9), "\n")
-View( movieReview9)
-
-```
-
-```{r 10thMovie}
-scrapeReviews10 <- function(url) {
-  movie10Reviews <- read_html(url)
-  
-  #title
-  movie10Reviews %>%
-    html_nodes('.title') %>%
-    html_text() -> title
-  
-  #username
-  movie10Reviews %>%
-    html_nodes('.display-name-link') %>%
-    html_text() -> username
-  
-  #content
-  movie10Reviews %>%
-    html_nodes('.content') %>%
-    html_text() -> content
-  
-  #date
-  movie10Reviews %>%
-    html_nodes('.review-date') %>%
-    html_text() -> date
-  
-  #stars
-  movie10Reviews %>%
-    html_nodes('.rating-other-user-rating') %>%
-    html_text() -> stars
-  
-  
-  cat("Title: ", length(title), "\n")
-  cat("Username: ", length(username), "\n")
-  cat("Content: ", length(content), "\n")
-  cat("Date: ", length(date), "\n")
-  cat("Stars: ", length(stars), "\n")
-  #cat("Metascore: ", length(metascore),"\n")
-  
-  minLength<- min(length(title), length(username), length(content), length(date), length(stars))
-  
-  
-  movie_reviews10 <- data.frame (
-    Title = title[1:minLength],
-    Username = username[1:minLength],
-    Content = content[1:minLength],
-    Date = date[1:minLength],
-    Stars = stars[1:minLength],
-    stringsAsFactors = FALSE
-  )
-  
-  return(movie_reviews10)
-}
-
-url1 <- 'https://www.imdb.com/title/tt3846674/reviews?ref_=tt_urv'
-target_reviews <- 300
-movieReview10 <- data.frame()
-
-page <- 1
-while (nrow(movieReview10) < target_reviews) {
-  url <- paste0(url1, page)
-  reviewsPage <- scrapeReviews10(url)
-  movieReview10 <- bind_rows(movieReview10, reviewsPage)
-  page <- page + 1
-}
-movieReview10 <- movieReview10[1:target_reviews, ]
-
-cat("Number of scraped reviews: ", nrow(movieReview10), "\n")
-View( movieReview10)
-```
-
-```{r 11bind}
-combined_df <- rbind(movieReview1, movieReview2,movieReview3,movieReview4,movieReview5,movieReview6,movieReview7,movieReview8,movieReview9,movieReview10)
+#10TH MOVIE(To All the Boys I've Loved Before)
+      session <- bow(url = 'https://www.imdb.com/title/tt3846674/reviews?ref_=tt_urv', 
+                     user_agent = "Educational") 
+      session
+      scrapeReviews10 <- function(page_url) { 
+        movie10Reviews <- read_html(page_url) 
+        
+        #title
+        movie10Reviews %>%
+          html_nodes('.title') %>%
+          html_text() -> title
+        
+        #username
+        movie10Reviews %>%
+          html_nodes('.display-name-link') %>%
+          html_text() -> username
+        
+        #content
+        movie10Reviews %>%
+          html_nodes('.content') %>%
+          html_text() -> content
+        
+        #date
+        movie10Reviews %>%
+          html_nodes('.review-date') %>%
+          html_text() -> date
+        
+        #stars
+        movie10Reviews %>%
+          html_nodes('.rating-other-user-rating') %>%
+          html_text() -> stars
+        
+        #dataframe
+        toAllBoys_df = data.frame(Title = title[1:25],
+                                   Username = username[1:25], 
+                                   Content = content[1:25],
+                                   Date = date[1:25],
+                                   Stars = stars[1:25]
+        )} 
+      
+      #URLs
+      toAllBoys_urls<- c('https://www.imdb.com/title/tt3846674/reviews?ref_=tt_urv',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnbyrdr42bb42mod56hkatcp4ul5pjt6uck5pe3fxnrkb4d3da5maou5y2if25eob5y6kyf42',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjyr3s4obby3untz7heb3b7gu3coq366ss7oi4ftpzld54k4afspc2su55dkqcencu3hwjo35a',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjsqls4sbb72indx6xjahe72tttfjrksbc5oa3frnzyobgrajpffyq7o2fnef4pbxcgu7ia',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjnjrrxq4obrs2motx4hiadcpuul5pjt6uckzpeyvrnzlb4drxjlk7encpuuuqw6mrpruev3mg',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrwqprmsbz43imtv7hlala7wvt5pjt6uckyoa2v5mjlb4dufryqwx6jbjqsxzugflkumdraq',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmruqpsm2azy34kdr6pjahc72w35pjt6uc25oq3vxmrdb4d52tsn3hvwh6kpq3le3ur25c25k',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrsrttmyajz3updz7hnb3b7wu35pjt6uckyoiyfzmjnb4dr5rs4dng74arbzusk2xobnhv7u',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmrqrpsm4bz33apdv6xka3dp4ud5pjt6ucctpe2vxnbob4dsnxzc7jwayaupmfbp5xdmipsoa',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzyr3rmqbb33mmtb7hiaxb72u35pjt6ucktoa4v5mrmb4d5vrw2nmk6l2adda6avev43twfm',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzzrdqmqbzt3uptv67ib7b7qwt5pjt6uckzpe3v3mjib4dq22wiwwm2zsfyj7dvcjgdqxr7o',
+                           'https://www.imdb.com/title/tt3846674/reviews/_ajax?&paginationKey=g4w6ddbmqyzdo6ic4oxwjmzxr3sm6abt3aot54hkb3dpuw35pjt6uck6oyzvxnrob4dwl3h5ulqdqz4i6r2pi3xjwp6ri'
+      )
+      
+      allReviews10  <- lapply(  toAllBoys_urls, scrapeReviews10) 
+      
+      movieReviews10 <- do.call(rbind, allReviews10) 
+      
+      View(movieReviews10)
+      
+#RBind(I combined all movie reviews I scraped)
+combined_df <- rbind(movieReviews1, movieReviews2,movieReviews3,movieReviews4,movieReviews5,movieReviews6,movieReviews7,movieReviews8,movieReviews9,movieReviews10)
 View(combined_df)
+
+write_xlsx(combined_df, "scrape3000reviews.xlsx")
 ```
+
+
