@@ -13,7 +13,7 @@ library(rvest)
 library(httr)
 library(dplyr)
 library(polite)
-library(writexl)
+
 
 #1ST MOVIE(Titanic)
 session <- bow(url = 'https://www.imdb.com/title/tt0120338/reviews?ref_=tt_urv', 
@@ -73,7 +73,6 @@ session
       
       movieReviews1 <- do.call(rbind, allReviews) 
       
-      View(movieReviews1)
 
 
 #2ND MOVIE(Wonka)
@@ -135,7 +134,6 @@ session2
       
       movieReviews2 <- do.call(rbind, allReviews2) 
       
-      View(movieReviews2)
       
   
 #3RD MOVIE(The Shawshank Redemption)
@@ -197,7 +195,6 @@ session2
       
       movieReviews3 <- do.call(rbind, allReviews3) 
       
-      View(movieReviews3)
 
 
 #4TH MOVIE(Argylle)
@@ -259,7 +256,6 @@ session2
       
       movieReviews4 <- do.call(rbind, allReviews4) 
       
-      View(movieReviews4)
 
 
 #5TH MOVIE(The Marvels)
@@ -322,7 +318,6 @@ session2
       
       movieReviews5 <- do.call(rbind, allReviews5) 
       
-      View(movieReviews5)
 
 
 #6TH MOVIE(Aquaman)
@@ -384,7 +379,6 @@ session2
       
       movieReviews6 <- do.call(rbind, allReviews6) 
       
-      View(movieReviews6)
 
 
 #7TH MOVIE(Barbie)
@@ -446,7 +440,7 @@ session2
       
       movieReviews7 <- do.call(rbind, allReviews7) 
       
-      View(movieReviews7)
+
 
 #8TH MOVIE(Five Feet Apart)
       session <- bow(url = 'https://www.imdb.com/title/tt1517268/reviews?ref_=tt_urv', 
@@ -508,7 +502,7 @@ session2
       
       movieReviews8 <- do.call(rbind, allReviews8) 
       
-      View(movieReviews8)
+
 
 #9TH MOVIE(Ready or Not)
       session <- bow(url = 'https://www.imdb.com/title/tt7798634/reviews?ref_=tt_urv', 
@@ -570,7 +564,6 @@ session2
       
       movieReviews9 <- do.call(rbind, allReviews9) 
       
-      View(movieReviews9)
 
 
 #10TH MOVIE(To All the Boys I've Loved Before)
@@ -632,13 +625,10 @@ session2
       
       movieReviews10 <- do.call(rbind, allReviews10) 
       
-      View(movieReviews10)
       
 #RBind(I combined all movie reviews I scraped)
 combined_df <- rbind(movieReviews1, movieReviews2,movieReviews3,movieReviews4,movieReviews5,movieReviews6,movieReviews7,movieReviews8,movieReviews9,movieReviews10)
-View(combined_df)
 
-write_xlsx(combined_df, "scrape3000reviews.xlsx")
 ```
 
 

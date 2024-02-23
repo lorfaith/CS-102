@@ -628,4 +628,4 @@ combined_df <- rbind(movieReviews1, movieReviews2,movieReviews3,movieReviews4,mo
 View(combined_df)
 
 
-write_xlsx(comined_df, "scrape3000reviews.xlsx")
+write_xlsx(combined_df, "scrape3000reviews.xlsx")
