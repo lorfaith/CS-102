@@ -21,8 +21,8 @@ scrapeReviews <- function(page_url) {
   phantom_thread_df = data.frame(
     Name = names[1:25],
     Date = dates[1:25],
-    User_Rating = ratings[1:25],
-    Content_Review = content_reviews[1:25],
+    UserRating = ratings[1:25],
+    ContentReview = content_reviews[1:25],
     Reviews = reviews[1:25]
   )
 }
