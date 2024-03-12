@@ -67,3 +67,4 @@ end - start # Total Elapsed Time
 # To Export the result
 save(papers, file = "Arxiv_Text_Mining.RData")
 write.csv(papers, file = "Arxiv papers on Text Mining.csv")
+
